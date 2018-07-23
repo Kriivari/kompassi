@@ -1,6 +1,6 @@
 from django.db import models
 
-from labour.models import ObsoleteSignupExtraBaseV1
+from labour.models import SignupExtraBase
 from labour.querybuilder import QueryBuilder, add_prefix
 
 
@@ -34,7 +34,7 @@ class TimeSlot(SimpleChoice):
     pass
 
 
-class SignupExtra(ObsoleteSignupExtraBaseV1):
+class SignupExtra(SignupExtraBase):
     shift_type = models.CharField(max_length=15,
         verbose_name='Toivottu työvuoron pituus',
         help_text='Haluatko tehdä yhden pitkän työvuoron vaiko monta lyhyempää vuoroa?',
