@@ -568,7 +568,7 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
                 "lipunvaihtopisteessä.\n\n"
                 "Tervetuloa Ropeconiin!",
             front_page_text="<h2>Tervetuloa Ropeconin lippukauppaan!</h2>"
-                "<p>Liput maksetaan tilauksen yhteydessä käyttämällä suomalaia verkkopankkipalveluja.</p>"
+                "<p>Liput maksetaan tilauksen yhteydessä käyttämällä suomalaia verkkopankkipalveluja. Ostoksella on 14 päivän peruutusoikeus kuitenkin niin, että viimeinen peruutuspäivä on 25.7.2019.</p>"
                 "<p>Maksetut liput toimitetaan e-lippuina sähköpostitse asiakkaan antamaan osoitteeseen. E-liput vaihdetaan rannekkeiksi tapahtuman lipunmyyntipisteillä 26.–28.7.2019.</p>"
                 "<p>Lisätietoja lipuista saat tapahtuman verkkosivuilta. <a href='https://2019.ropecon.fi/liput/'>Siirry takaisin tapahtuman verkkosivuille</a>.</p>"
                 "<p>Huom! Tämä verkkokauppa palvelee ainoastaan asiakkaita, joilla on osoite Suomessa. Mikäli tarvitset "
