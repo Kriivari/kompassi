@@ -54,7 +54,7 @@ STATE_CSS = dict(
 COMPUTER_CHOICES = [
     ('con', _('Laptop provided by the event')),
     ('pc', _('Own laptop – PC')),
-    ('mac', _('Own laptop – Mac')),
+    ('mac', _('Own laptop – Mac')),
     ('none', _('No computer required')),
 ]
 
@@ -856,7 +856,7 @@ class Programme(models.Model, CsvExportMixin):
                 'end_time',
                 'language',
                 'rpg_system',
-                                  
+
                 no_language=self.ropecon2018_is_no_language if self.category.slug == 'roolipeli' else None,
                 english_ok=self.is_english_ok if self.category.slug == 'roolipeli' else None,
                 children_friendly=self.is_children_friendly if self.category.slug == 'roolipeli' else None,
@@ -869,7 +869,7 @@ class Programme(models.Model, CsvExportMixin):
                 tags=list(self.tags.values_list('slug', flat=True)),
                 genres=self.ropecon_genres,
                 styles=self.ropecon_styles,
-                              
+
             )
         else:
             raise NotImplementedError(format)
@@ -881,7 +881,7 @@ class Programme(models.Model, CsvExportMixin):
             if getattr(self, 'ropecon2018_genre_' + genre):
                 genres.append(genre)
         return genres
-    
+
     @property
     def ropecon_styles(self):
         styles = []
@@ -889,7 +889,7 @@ class Programme(models.Model, CsvExportMixin):
             if getattr(self, 'ropecon2018_style_' + style):
                 styles.append(style)
         return styles
-    
+
     @property
     def state_css(self):
         return STATE_CSS[self.state]
