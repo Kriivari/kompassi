@@ -151,7 +151,8 @@ INSTALLED_APPS = (
     # 'nexmo',
     'django_babel',
     'django_prometheus',
-    'rest_framework',
+    'lippukala',
+    'paikkala',
 
     'core',
     'programme',
@@ -168,7 +169,6 @@ INSTALLED_APPS = (
     # 'sms',
     'membership',
     'intra',
-    'lippukala',
     'desuprofile_integration',
     'enrollment',
     'feedback',
