@@ -713,6 +713,23 @@ class Programme(models.Model, CsvExportMixin):
         return self._formatted_hosts
 
     @property
+    def ropecon_formatted_hosts(self):
+        if not hasattr(self, '_formatted_hosts'):
+            from .freeform_organizer import FreeformOrganizer
+
+            parts = [f.text for f in FreeformOrganizer.objects.filter(programme=self)]
+
+            public_programme_roles = self.programme_roles.filter(
+                role__is_public=True
+            ).select_related('person')
+
+            parts.extend(pr.person.get_formatted_name('firstname_surname') for pr in public_programme_roles)
+
+            self._formatted_hosts = ', '.join(parts)
+
+        return self._formatted_hosts
+
+    @property
     def is_blank(self):
         return False
 
