@@ -99,25 +99,22 @@ class Setup(object):
             defaults=labour_event_meta_defaults,
         )
 
-        self.afterparty_perk, unused = Perk.objects.get_or_create(
-            event=self.event,
-            slug='kaato',
-            defaults=dict(
-                name='Kaato',
-            ),
-        )
-
-        for pc_name, pc_slug, pc_app_label, pc_afterparty, pc_one_food, pc_two_foods in [
-            ('Conitea', 'conitea', 'labour', True, False, True),
-            ('Vuorovastaava', 'ylivankari', 'labour', True, False, True),
-            ('Ylityöntekijä', 'ylityovoima', 'labour', True, False, True),
-            ('Työvoima', 'tyovoima', 'labour', True, False, False),
-            ('Ohjelmanjärjestäjä', 'ohjelma', 'programme', True, False, False),
-            ('Guest of Honour', 'goh', 'programme', False, False, False), # tervetullut muttei kutsuta automaattiviestillä
-            ('Media', 'media', 'badges', False, False, False),
-            ('Myyjä', 'myyja', 'badges', False, False, False),
-            ('Vieras', 'vieras', 'badges', False, False, False),
-            ('Vapaalippu', 'vapaalippu', 'badges', False, False, False),
+        for pc_name, pc_slug, pc_app_label in [
+            ('Conitea', 'conitea', 'labour'),
+            ('Vuorovastaava', 'ylivankari', 'labour'),
+            ('Ylityöntekijä', 'ylityovoima', 'labour'),
+            ('Työvoima', 'tyovoima', 'labour'),
+            ('Ohjelmanjärjestäjä', 'ohjelma', 'programme'),
+            ('Pelinjohtaja', 'pelinjohto', 'programme'),
+            ('Larp-pelinjohtaja', 'larpjohto', 'programme'),
+            ('Korttipelijärjestäjä', 'korttijarjestaja', 'programme'),
+            ('Figupelijärjestäjä', 'figujarjestaja', 'programme'),
+            ('Lautapelijärjestäjä', 'lautajarjestaja', 'programme'),
+            ('Guest of Honour', 'goh', 'programme'), # tervetullut muttei kutsuta automaattiviestillä
+            ('Media', 'media', 'badges'),
+            ('Myyjä', 'myyja', 'badges'),
+            ('Vieras', 'vieras', 'badges'),
+            ('Vapaalippu', 'vapaalippu', 'badges'),
         ]:
             personnel_class, created = PersonnelClass.objects.get_or_create(
                 event=self.event,
@@ -128,10 +125,6 @@ class Setup(object):
                     priority=self.get_ordering_number(),
                 ),
             )
-
-            if pc_afterparty and created:
-                personnel_class.perks = [self.afterparty_perk]
-                personnel_class.save()
 
         tyovoima = PersonnelClass.objects.get(event=self.event, slug='tyovoima')
         ylityovoima = PersonnelClass.objects.get(event=self.event, slug='ylityovoima')
@@ -229,6 +222,7 @@ class Setup(object):
             Role,
             Room,
             SpecialStartTime,
+            Tag,
             TimeBlock,
             View,
         )
@@ -298,9 +292,13 @@ class Setup(object):
 
         for pc_slug, role_title, role_is_default in [
             ('ohjelma', 'Ohjelmanjärjestäjä', True),
-            ('ohjelma', 'Pelinjohtaja', False),
             ('ohjelma', 'Pelinjärjestäjä', False),
             ('ohjelma', 'Peliesittelijä', False),
+            ('pelinjohtaja', 'Pelinjohtaja', True),
+            ('larpjohto', 'LARP-Pelinjohtaja', True),
+            ('korttijarjestaja', 'Korttipelijärjestäjä', True),
+            ('figujarjestaja', 'Figupelijärjestäjä', True),
+            ('lautajarjestaja', 'Lautapelijärjestäjä', True),
         ]:
             personnel_class = PersonnelClass.objects.get(event=self.event, slug=pc_slug)
             role, unused = Role.objects.get_or_create(
@@ -340,6 +338,39 @@ class Setup(object):
                         public=style != 'sisainen',
                     )
                 )
+
+        for tag_title, tag_class in [
+            ('Vain täysi-ikäisille', 'k18'),
+            ('Työpaja', 'workshop'),
+            ('Paneeli', 'panel'),
+            ('Muu ohjelma', 'other'),
+            ('Freeform', 'freeform'),
+            ('Pöytäpeli', 'rpg'),
+            ('Lautapeli', 'boardgame'),
+            ('Larppi', 'larp'),
+            ('Korttipeli', 'cardgame'),
+            ('Kokemuspiste', 'xp'),
+            ('Figupeli', 'miniature'),
+            ('Tanssiohjelma', 'dance'),
+            ('Taisteluohjelma', 'fight'),
+            ('Lapsiystävällinen', 'forchildren'),
+            ('Kunniavieras', 'goh'),
+            ('Kielivapaa', 'nolanguage'),
+            ('Keskustelu', 'discussion'),
+            ('In English', 'english'),
+            ('Esitelmä', 'presentation'),
+            ('Ei sovellu lapsille', 'notforkids'),
+            ('Demo', 'demo'),
+            ('Aloittelijaystävällinen', 'beginners'),
+            ('Äänekäs', 'noisy'),
+        ]:
+            Tag.objects.get_or_create(
+                event=self.event,
+                title=tag_title,
+                defaults=dict(
+                    style=tag_class,
+                ),
+            )
 
         for start_time, end_time in [
             (
@@ -568,7 +599,7 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
                 "lipunvaihtopisteessä.\n\n"
                 "Tervetuloa Ropeconiin!",
             front_page_text="<h2>Tervetuloa Ropeconin lippukauppaan!</h2>"
-                "<p>Liput maksetaan tilauksen yhteydessä käyttämällä suomalaia verkkopankkipalveluja. Ostoksella on 14 päivän peruutusoikeus kuitenkin niin, että viimeinen peruutuspäivä on 25.7.2019.</p>"
+                "<p>Liput maksetaan tilauksen yhteydessä käyttämällä suomalaisia verkkopankkipalveluja. Ostoksella on 14 päivän peruutusoikeus kuitenkin niin, että viimeinen peruutuspäivä on 25.7.2019.</p>"
                 "<p>Maksetut liput toimitetaan e-lippuina sähköpostitse asiakkaan antamaan osoitteeseen. E-liput vaihdetaan rannekkeiksi tapahtuman lipunmyyntipisteillä 26.–28.7.2019.</p>"
                 "<p>Lisätietoja lipuista saat tapahtuman verkkosivuilta. <a href='https://2019.ropecon.fi/liput/'>Siirry takaisin tapahtuman verkkosivuille</a>.</p>"
                 "<p>Huom! Tämä verkkokauppa palvelee ainoastaan asiakkaita, joilla on osoite Suomessa. Mikäli tarvitset "
@@ -584,7 +615,7 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
         else:
             defaults.update(
                 ticket_sales_starts=datetime(2019, 2, 14, 10, 0, tzinfo=self.tz),
-                ticket_sales_ends=datetime(2019, 7, 2, 0, 0, tzinfo=self.tz),
+                ticket_sales_ends=datetime(2019, 7, 28, 15, 0, tzinfo=self.tz),
             )
 
         meta, unused = TicketsEventMeta.objects.get_or_create(event=self.event, defaults=defaults)
@@ -600,7 +631,7 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
 
         for product_info in [
             dict(
-                name='Ropecon 2019 viikonloppulippu pe-su, aikuiset',
+                name='Ropecon 2019 viikonloppulippu pe-su, aikuiset, ennakko',
                 description='Ropecon 2019-tapahtuman pääsylippu 26.-28.7.2019.',
                 limit_groups=[
                     limit_group('Pääsyliput', 9999),
@@ -612,7 +643,7 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
                 ordering=self.get_ordering_number(),
             ),
             dict(
-                name='Ropecon 2019 viikonloppulippu pe-su, lapset',
+                name='Ropecon 2019 viikonloppulippu pe-su, lapset, ennakko',
                 description='7-12-vuotiaat lapset aikuisen seurassa.',
                 limit_groups=[
                     limit_group('Pääsyliput', 9999),
@@ -624,13 +655,37 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
                 ordering=self.get_ordering_number(),
             ),
             dict(
+                name='Ropecon 2019 viikonloppulippu pe-su, aikuiset',
+                description='Ropecon 2019-tapahtuman pääsylippu 26.-28.7.2019.',
+                limit_groups=[
+                    limit_group('Pääsyliput', 9999),
+                ],
+                price_cents=4300,
+                requires_shipping=False,
+                electronic_ticket=True,
+                available=False,
+                ordering=self.get_ordering_number(),
+            ),
+            dict(
+                name='Ropecon 2019 viikonloppulippu pe-su, lapset',
+                description='7-12-vuotiaat lapset aikuisen seurassa.',
+                limit_groups=[
+                    limit_group('Pääsyliput', 9999),
+                ],
+                price_cents=2500,
+                requires_shipping=False,
+                electronic_ticket=True,
+                available=False,
+                ordering=self.get_ordering_number(),
+            ),
+            dict(
                 name='Ropecon 2019 -tapahtuman kannatusranneke',
                 description='Sisältää pääsylipun Ropecon 2019 -tapahtumaan 26.–28.7.2019 sekä Ropecon ry:n jäsenyyden vuodelle 2019.',
                 limit_groups=[
                     limit_group('Pääsyliput', 9999),
                 ],
                 price_cents=7000,
-                requires_shipping=False,
+                requires_shipping=True,
                 electronic_ticket=True,
                 available=True,
                 ordering=self.get_ordering_number(),
@@ -679,9 +734,8 @@ Puheohjelman käytössä ovat osittain samat tilat kuin edellisvuonna. Samoista 
         )
 
         for team_slug, team_name in [
-            ('tuottajat', 'Tuottajat'),
             ('infra', 'Infra'),
-            ('palvelut', 'Palvelut'),
+            ('tyovoima', 'Työvoima'),
             ('ohjelma', 'Ohjelma'),
         ]:
             team_group, = IntraEventMeta.get_or_create_groups(self.event, [team_slug])

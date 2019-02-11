@@ -314,6 +314,7 @@ class RpgForm(forms.ModelForm, AlternativeProgrammeFormMixin):
         )
 
 
+
 class LarpForm(forms.ModelForm, AlternativeProgrammeFormMixin):
     """
     LARP form
